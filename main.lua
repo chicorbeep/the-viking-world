@@ -83,16 +83,21 @@ function EnemyUpdate()
     ENEMY.y = ENEMY.y + (ENEMY.speed) * positionYSign
 
     if positionYSign == 1 or positionYSign == 0 then
-        ENEMY.rotation = 0
+        ENEMY.rotation = math.pi* 2
 
     elseif positionYSign == -1 then
-        ENEMY.rotation = math.pi
+        ENEMY.rotation = math.pi*2
     end
+	
+	playerAngle = math.atan2(PLAYER.y-ENEMY.y, PLAYER.x-ENEMY.x)
+
+	love.graphics.draw(enemySprite, ENEMY.x, ENEMY.y, 1, 1, 0,0)
+
 
     if PLAYER.x > ENEMY.x then
-   		ENEMY.rotation = ENEMY.rotation - math.pi/2 * positionYSign
+   		ENEMY.rotation = ENEMY.rotation - math.pi/2 * positionYSign+math.pi
     elseif PLAYER.x < ENEMY.x then
-   		ENEMY.rotation = ENEMY.rotation + math.pi/2 * positionYSign
+   		ENEMY.rotation = ENEMY.rotation + math.pi/2 * positionYSign-math.pi/4
     elseif positionXSign == 0 then
    		ENEMY.rotation = ENEMY.rotation
     end
@@ -112,11 +117,9 @@ end
 
 
 function GameOver()
-	if PLAYER.hp == 0 then --- Game is over
+	if PLAYER.hp < 1 then -----------Game is over
 		love.graphics.setBackgroundColor(0, 0, 0)
-		love.graphics.print(PLAYER.x.." "..PLAYER.y..";"..ENEMY.x.." "..ENEMY.y, 0, 0)
-		love.graphics.draw(playerSprite, (PLAYER.x + 33)  * BOARD_SCALE, (PLAYER.y + 56) * BOARD_SCALE, PLAYER.rotation)
-		love.graphics.draw(enemySprite, (ENEMY.x + 33) * BOARD_SCALE, (ENEMY.y + 56) * BOARD_SCALE, ENEMY.rotation)
+
 	end
 end
 
@@ -160,6 +163,7 @@ function PlayerUpdate()
 
     if PLAYER.hp < 1 then
     	GAME_STATE = "loss"
+		GameOver()
     end
 
 
