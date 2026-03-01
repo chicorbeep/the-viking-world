@@ -78,13 +78,14 @@ function EnemyUpdate()
 
     if positionYSign == 1 or positionYSign == 0 then
         ENEMY.rotation = 0
+
     elseif positionYSign == -1 then
         ENEMY.rotation = math.pi
     end
 
-    if positionXSign == 1 then
+    if PLAYER.x > ENEMY.x then
    		ENEMY.rotation = ENEMY.rotation - math.pi/2 * positionYSign
-    elseif positionXSign == -1 then
+    elseif PLAYER.x < ENEMY.x then
    		ENEMY.rotation = ENEMY.rotation + math.pi/2 * positionYSign
     elseif positionXSign == 0 then
    		ENEMY.rotation = ENEMY.rotation
@@ -99,6 +100,19 @@ function TriggerFight()
 	-- placeholdler :3
 	GAME_STATE = "battle"
 end
+
+
+
+function GameOver()
+	if PLAYER.hp == 0 then --- Game is over
+		love.graphics.setBackgroundColor(0, 0, 0)
+		love.graphics.print(PLAYER.x.." "..PLAYER.y..";"..ENEMY.x.." "..ENEMY.y, 0, 0)
+		love.graphics.draw(playerSprite, (PLAYER.x + 33)  * BOARD_SCALE, (PLAYER.y + 56) * BOARD_SCALE, PLAYER.rotation)
+		love.graphics.draw(enemySprite, (ENEMY.x + 33) * BOARD_SCALE, (ENEMY.y + 56) * BOARD_SCALE, ENEMY.rotation)
+	end
+end
+
+
 
 function PlayerUpdate()
 	local downHeld = love.keyboard.isDown("down")
