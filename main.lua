@@ -3,21 +3,35 @@
 	mi wile ala sin kepeken e toki ni!
 	toki ni li ike MUTE tawa mi.
 ]]
+<<<<<<< HEAD
 mainFont = love.graphics.newFont("assets/CozetteVector.ttf", 13)
+=======
+--mainFont = love.graphics.newFont("assets/CozetteVector.ttf", 13)
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 dtotal = 0
 
 PLAYER = {
     x = 0,
     y = 0,
 	speed = 4,
+<<<<<<< HEAD
 	hp = 100
+=======
+	hp = 100,
+	rotation = 0
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 }
 
 ENEMY = {
 	x = 200,
 	y = 200,
 	speed = 1,
+<<<<<<< HEAD
 	hp = 20
+=======
+	hp = 20,
+	rotation = 0
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 }
 
 gameState = "overworld"  -- overworld, battle, or title?
@@ -25,16 +39,27 @@ gameState = "overworld"  -- overworld, battle, or title?
 
 
 function love.load()
+<<<<<<< HEAD
 	playerSprite = love.graphics.newImage("assets/placeholders/player.png")
 	enemySprite = love.graphics.newImage("assets/placeholders/enemy.png")
+=======
+	playerSprite = love.graphics.newImage("assets/placeholders/Default size/Ships/ship (1).png")
+	enemySprite = love.graphics.newImage("assets/placeholders/Default size/Ships/Pirate.png")
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 end
 
 function love.draw()
 
 	if gameState == "overworld" then
 		love.graphics.print(PLAYER.x.." "..PLAYER.y..";"..ENEMY.x.." "..ENEMY.y, 0, 0)
+<<<<<<< HEAD
 		love.graphics.draw(playerSprite, PLAYER.x, PLAYER.y)
 		love.graphics.draw(enemySprite, ENEMY.x, ENEMY.y)
+=======
+		love.graphics.draw(playerSprite, PLAYER.x, PLAYER.y, PLAYER.rotation)
+		love.graphics.draw(enemySprite, ENEMY.x, ENEMY.y)
+		print(rotation)
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 	elseif gameState == "battle" then
 	 	love.graphics.draw(playerSprite, 50, 50)
 		love.graphics.draw(enemySprite, 150, 50)
@@ -68,9 +93,23 @@ end
 
 
 function EnemyUpdate()
+<<<<<<< HEAD
 	ENEMY.x = ENEMY.x + (ENEMY.speed)*sign(PLAYER.x-ENEMY.x)
 	ENEMY.y = ENEMY.y + (ENEMY.speed)*sign(PLAYER.y-ENEMY.y)
 
+=======
+
+	ENEMY.x = ENEMY.x + (ENEMY.speed)*sign(PLAYER.x-ENEMY.x)
+
+	ENEMY.y = ENEMY.y + (ENEMY.speed)*sign(PLAYER.y-ENEMY.y)
+
+	if PLAYER.x-ENEMY.x > 0 then
+		ENEMY.rotation = math.pi/2
+	else 
+		ENEMY.rotation = math.pi
+	
+	end
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 	if (ENEMY.x == PLAYER.x and ENEMY.y == PLAYER.y) then
 		TriggerFight()
 	end
@@ -87,6 +126,11 @@ function PlayerUpdate()
 	local leftHeld = love.keyboard.isDown("left")
 	local rightHeld = love.keyboard.isDown("right")
 
+<<<<<<< HEAD
+=======
+	EnemyUpdate()
+
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 	local modifier
 	-- movement !!!
 
@@ -101,15 +145,34 @@ function PlayerUpdate()
 	end
 
 	if downHeld and not upHeld then
+<<<<<<< HEAD
 		PLAYER.y = math.floor(PLAYER.y + PLAYER.speed * modifier)
 	elseif upHeld and not downHeld then
         PLAYER.y = math.floor(PLAYER.y - PLAYER.speed * modifier)
+=======
+		PLAYER.y = math.floor(PLAYER.y + PLAYER.speed * modifier) -- Vector Math to prevent increasing speed onm diagnol movement
+		PLAYER.rotation = 0
+
+	elseif upHeld and not downHeld then
+        PLAYER.y = math.floor(PLAYER.y - PLAYER.speed * modifier)
+		-- love.graphics.rotate(playerSprite)
+		PLAYER.rotation = -math.pi
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
     end
 
 	if leftHeld and not rightHeld then
 		PLAYER.x = math.floor(PLAYER.x - PLAYER.speed * modifier)
+<<<<<<< HEAD
 	elseif rightHeld and not leftHeld then
 		PLAYER.x = math.floor(PLAYER.x + PLAYER.speed * modifier)
+=======
+		PLAYER.rotation = math.pi/2
+	elseif rightHeld and not leftHeld then
+		PLAYER.x = math.floor(PLAYER.x + PLAYER.speed * modifier)
+		PLAYER.rotation = -math.pi/2
+	
+
+>>>>>>> 29af294 (Added ship assets and enable movement and rotation of sprite)
 	end
 
 
