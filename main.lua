@@ -3,44 +3,44 @@
 	mi wile ala sin kepeken e toki ni!
 	toki ni li ike MUTE tawa mi.
 ]]
---mainFont = love.graphics.newFont("assets/CozetteVector.ttf", 13)
+mainFont = love.graphics.newFont("assets/CozetteVector.ttf", 26)
 dtotal = 0
 
 PLAYER = {
-    x = 0,
-    y = 0,
-	speed = 4,
+    x = 320,
+    y = 240,
+	speed = 3,
 	hp = 100,
 	rotation = 0
 }
 
 ENEMY = {
-	x = 200,
-	y = 200,
+	x = 480,
+	y = 0,
 	speed = 1,
 	hp = 20,
 	rotation = 0
 }
 
-gameState = "overworld"  -- overworld, battle, or title?
-
-
+GAME_STATE = "overworld" -- overworld, battle, or title?
+BOARD_SCALE = 2
 
 function love.load()
-	playerSprite = love.graphics.newImage("assets/placeholders/Default size/Ships/ship (1).png")
-	enemySprite = love.graphics.newImage("assets/placeholders/Default size/Ships/Pirate.png")
+	love.graphics.setFont(mainFont)
+	playerSprite = love.graphics.newImage("assets/asset-pack/Ships/ship (1).png")
+	enemySprite = love.graphics.newImage("assets/asset-pack/Ships/Pirate.png")
 end
 
 function love.draw()
 
-	if gameState == "overworld" then
+    if GAME_STATE == "overworld" then
+		love.graphics.setBackgroundColor(0.1, 0.2, 0.7)
 		love.graphics.print(PLAYER.x.." "..PLAYER.y..";"..ENEMY.x.." "..ENEMY.y, 0, 0)
-		love.graphics.draw(playerSprite, PLAYER.x, PLAYER.y, PLAYER.rotation)
-		love.graphics.draw(enemySprite, ENEMY.x, ENEMY.y)
-		print(rotation)
-	elseif gameState == "battle" then
-	 	love.graphics.draw(playerSprite, 50, 50)
-		love.graphics.draw(enemySprite, 150, 50)
+		love.graphics.draw(playerSprite, (PLAYER.x + 33)  * BOARD_SCALE, (PLAYER.y + 56) * BOARD_SCALE, PLAYER.rotation)
+		love.graphics.draw(enemySprite, (ENEMY.x + 33) * BOARD_SCALE, (ENEMY.y + 56) * BOARD_SCALE, ENEMY.rotation)
+	elseif GAME_STATE == "battle" then
+	 	love.graphics.draw(playerSprite, 320, 480)
+		love.graphics.draw(enemySprite, 960, 480)
 		love.graphics.print("BATTLE TIME", 0, 0) -- unintentional off reference (this one has never actually played off)
 	end
 
@@ -50,19 +50,19 @@ end
 function love.update(dt)
 	dtotal = dtotal + dt
 
-	if gameState == "overworld" then
+	if GAME_STATE == "overworld" then
 		PlayerUpdate()
 		EnemyUpdate()
-	elseif gameState == "battle" then
+	elseif GAME_STATE == "battle" then
 		print("This is where the battle would go... IF WE HAD ANY!!")
 		ENEMY.x = 400
 		ENEMY.y = 300
 		love.timer.sleep(2)
-		gameState = "overworld"
+		GAME_STATE = "overworld"
 	else
 		print("wha")
 		love.timer.sleep(2)
-		gameState = "overworld"
+		GAME_STATE = "overworld"
 	end
 end
 
@@ -71,17 +71,25 @@ end
 
 
 function EnemyUpdate()
+	local positionXSign = sign(PLAYER.x - ENEMY.x)
+	local positionYSign = sign(PLAYER.y - ENEMY.y)
+	ENEMY.x = ENEMY.x + (ENEMY.speed) * positionXSign
+    ENEMY.y = ENEMY.y + (ENEMY.speed) * positionYSign
 
-	ENEMY.x = ENEMY.x + (ENEMY.speed)*sign(PLAYER.x-ENEMY.x)
+    if positionYSign == 1 or positionYSign == 0 then
+        ENEMY.rotation = 0
+    elseif positionYSign == -1 then
+        ENEMY.rotation = math.pi
+    end
 
-	ENEMY.y = ENEMY.y + (ENEMY.speed)*sign(PLAYER.y-ENEMY.y)
+    if positionXSign == 1 then
+   		ENEMY.rotation = ENEMY.rotation - math.pi/2 * positionYSign
+    elseif positionXSign == -1 then
+   		ENEMY.rotation = ENEMY.rotation + math.pi/2 * positionYSign
+    elseif positionXSign == 0 then
+   		ENEMY.rotation = ENEMY.rotation
+    end
 
-	if PLAYER.x-ENEMY.x > 0 then
-		ENEMY.rotation = math.pi/2
-	else 
-		ENEMY.rotation = math.pi
-	
-	end
 	if (ENEMY.x == PLAYER.x and ENEMY.y == PLAYER.y) then
 		TriggerFight()
 	end
@@ -89,7 +97,7 @@ end
 
 function TriggerFight()
 	-- placeholdler :3
-	gameState = "battle"
+	GAME_STATE = "battle"
 end
 
 function PlayerUpdate()
@@ -98,11 +106,8 @@ function PlayerUpdate()
 	local leftHeld = love.keyboard.isDown("left")
 	local rightHeld = love.keyboard.isDown("right")
 
-	EnemyUpdate()
-
-	local modifier
-	-- movement !!!
-
+    -- Vector Math to prevent increasing speed onm diagnol movement
+    local modifier
 	if bool_to_num(downHeld) +
 		bool_to_num(upHeld) +
 		bool_to_num(leftHeld) +
@@ -114,25 +119,21 @@ function PlayerUpdate()
 	end
 
 	if downHeld and not upHeld then
-		PLAYER.y = math.floor(PLAYER.y + PLAYER.speed * modifier) -- Vector Math to prevent increasing speed onm diagnol movement
+		PLAYER.y = math.floor(PLAYER.y + PLAYER.speed * modifier)
 		PLAYER.rotation = 0
-
 	elseif upHeld and not downHeld then
         PLAYER.y = math.floor(PLAYER.y - PLAYER.speed * modifier)
 		-- love.graphics.rotate(playerSprite)
 		PLAYER.rotation = -math.pi
     end
 
-	if leftHeld and not rightHeld then
-		PLAYER.x = math.floor(PLAYER.x - PLAYER.speed * modifier)
-		PLAYER.rotation = math.pi/2
-	elseif rightHeld and not leftHeld then
-		PLAYER.x = math.floor(PLAYER.x + PLAYER.speed * modifier)
-		PLAYER.rotation = -math.pi/2
-	
-
-	end
-
+    if leftHeld and not rightHeld then
+        PLAYER.x = math.floor(PLAYER.x - PLAYER.speed * modifier)
+        PLAYER.rotation = math.pi / 2
+    elseif rightHeld and not leftHeld then
+        PLAYER.x = math.floor(PLAYER.x + PLAYER.speed * modifier)
+        PLAYER.rotation = -math.pi / 2
+    end
 
 
 end

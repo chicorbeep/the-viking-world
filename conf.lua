@@ -1,5 +1,12 @@
+
+
+
 function love.conf(t)
-	t.console = true
+    t.console = true
+    t.window.width = 1280
+    t.window.height = 960
+    t.window.icon = nil --placeholder
+	t.window.title = "The Viking World"
 end
 
 -- utility functions
