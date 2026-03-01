@@ -1,26 +1,28 @@
-
+--[[
+	aaaaa!! mi sona ala e toki ilo Luja.
+	mi wile ala sin kepeken e toki ni!
+	toki ni li ike MUTE tawa mi.
+]]
 mainFont = love.graphics.newFont("assets/CozetteVector.ttf", 13)
 dtotal = 0
 
 PLAYER = {
     x = 0,
     y = 0,
-	speed = 6,
+	speed = 4,
 	hp = 100
 }
 
 ENEMY = {
 	x = 200,
 	y = 200,
-	speed = 2,
+	speed = 1,
 	hp = 20
 }
 
 gameState = "overworld"  -- overworld, battle, or title?
 
-function love.conf(t)
-	t.console = true
-end
+
 
 function love.load()
 	playerSprite = love.graphics.newImage("assets/placeholders/player.png")
@@ -28,9 +30,18 @@ function love.load()
 end
 
 function love.draw()
-	love.graphics.print(dtotal, 0, 0)
-	love.graphics.draw(playerSprite, PLAYER.x, PLAYER.y)
-	love.graphics.draw(enemySprite, ENEMY.x, ENEMY.y)
+
+	if gameState == "overworld" then
+		love.graphics.print(PLAYER.x.." "..PLAYER.y..";"..ENEMY.x.." "..ENEMY.y, 0, 0)
+		love.graphics.draw(playerSprite, PLAYER.x, PLAYER.y)
+		love.graphics.draw(enemySprite, ENEMY.x, ENEMY.y)
+	elseif gameState == "battle" then
+	 	love.graphics.draw(playerSprite, 50, 50)
+		love.graphics.draw(enemySprite, 150, 50)
+		love.graphics.print("BATTLE TIME", 0, 0) -- unintentional off reference (this one has never actually played off)
+	end
+
+
 end
 
 function love.update(dt)
@@ -53,13 +64,7 @@ function love.update(dt)
 end
 
 
-function sign(x)
-	if x ~= 0 then
-		return x / math.abs(x)
-	else
-		return 0
-	end
-end
+
 
 
 function EnemyUpdate()
@@ -77,20 +82,36 @@ function TriggerFight()
 end
 
 function PlayerUpdate()
+	local downHeld = love.keyboard.isDown("down")
+	local upHeld = love.keyboard.isDown("up")
+	local leftHeld = love.keyboard.isDown("left")
+	local rightHeld = love.keyboard.isDown("right")
+
+	local modifier
 	-- movement !!!
-	if love.keyboard.isDown("down") then
-		PLAYER.y = PLAYER.y + PLAYER.speed
+
+	if bool_to_num(downHeld) +
+		bool_to_num(upHeld) +
+		bool_to_num(leftHeld) +
+		bool_to_num(rightHeld) == 2
+	then
+		modifier = 1/math.sqrt(2)
+	else
+		modifier = 1
 	end
 
-    if love.keyboard.isDown("up") then
-        PLAYER.y = PLAYER.y - PLAYER.speed
+	if downHeld and not upHeld then
+		PLAYER.y = math.floor(PLAYER.y + PLAYER.speed * modifier)
+	elseif upHeld and not downHeld then
+        PLAYER.y = math.floor(PLAYER.y - PLAYER.speed * modifier)
     end
 
-	if love.keyboard.isDown("left") then
-		PLAYER.x = PLAYER.x - PLAYER.speed
+	if leftHeld and not rightHeld then
+		PLAYER.x = math.floor(PLAYER.x - PLAYER.speed * modifier)
+	elseif rightHeld and not leftHeld then
+		PLAYER.x = math.floor(PLAYER.x + PLAYER.speed * modifier)
 	end
 
-	if love.keyboard.isDown("right") then
-		PLAYER.x = PLAYER.x + PLAYER.speed
-	end
+
+
 end
