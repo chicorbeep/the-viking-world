@@ -66,8 +66,8 @@ function love.update(dt)
 		EnemyUpdate()
 	elseif GAME_STATE == "battle" then
 		love.timer.sleep(3)
-		ENEMY.x = 400
-		ENEMY.y = 300
+		ENEMY.x = math.random(0, 640)
+		ENEMY.y = math.random(0, 480)
 		GAME_STATE = "overworld"
 	elseif GAME_STATE == "end" then
         love.timer.sleep(3)
@@ -103,7 +103,7 @@ end
 
 function TriggerFight()
 	GAME_STATE = "battle"
-	local hpLoss = math.random(45, 55)
+	local hpLoss = math.random(10, 40)
 	BATTLE_MESSAGE = "You ran into the enemy ship! Lost "..hpLoss.. "HP!"
 	PLAYER.hp = PLAYER.hp - hpLoss
 end
